@@ -38,13 +38,18 @@ const generateImages = (el, count = 10) => {
     const item = document.createElement("div");
     item.className = "grid__item";
 
+    const a =document.createElement("a");
+    a.className = "grid__link";
+    a.setAttribute('href', '/logout');
+    item.appendChild(a);
+
     const content = document.createElement("img");
     //const width = getRandomSize(200, 600);
     //const height = getRandomSize(200, 400);
     content.src = miArraydefotos[i].src;
 
-    item.appendChild(content);
-    gridItems.push({ item, content });
+    a.appendChild(content);
+    gridItems.push({ item,a,content });
 
     return item;
   };

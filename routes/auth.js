@@ -5,6 +5,7 @@ const router  = express.Router();
 /** User model **/const User = require("../models/user");
 const multer  = require('multer');
 const Picture = require('../models/picture');
+const mongoose = require('mongoose');
 /* GET home page */
 /*router.get('/home', (req, res, next) => {
   res.render('home');
@@ -75,15 +76,26 @@ router.post("/", passport.authenticate("local", {
 /******************LOGGIN********************/
 /********LOGGIN PRIVATE ROUTES **************/
 
-router.get("/home", ensureLogin.ensureLoggedIn(), (req, res) => {
-  
-  Picture.find((err, pictures) => {
+router.get("/home", ensureLogin.ensureLoggedIn('/'), (req, res) => {
+
+  Picture.find({owner:{$ne: mongoose.Types.ObjectId(req.user._id) }})
+  .then( pictures=> {
 
     console.log(pictures);
     console.log(req.user );
         
         res.render('home',{pictures :pictures, user: req.user })
       })
+  .catch(error => {
+    next(error)
+  })
+ /* Picture.find((err, pictures) => {
+
+    console.log(pictures);
+    console.log(req.user );
+        
+        res.render('home',{pictures :pictures, user: req.user })
+      })*/
   
 });
 
@@ -100,7 +112,7 @@ router.get("/logout", (req, res) => {
 
 
 // Route to upload from project base path
-const upload = multer({ dest: './public/uploads/' });
+const upload = multer({ dest: '../public/uploads/' });
 
 router.post('/upload', upload.single('photo'), (req, res) => {
 console.log(req._id);
